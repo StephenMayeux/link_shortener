@@ -10,8 +10,23 @@ Meteor.startup(() => {
   });
 });
 
+// Executed whenever user visits a route with token
+function onRoute(req, res, next) {
+  // take take out of url and find matching link in collection
+  const link = Links.findOne({ token: req.params.token });
+
+  // if we find a link, redirect user
+  // otherwise, send user to homepage
+  if (link) {
+    res.writeHead(307, { 'Location': link.url });
+    res.end();
+  } else {
+    next();
+  }
+}
+
 const middleware = ConnectRoute(function(router) {
-  router.get('/:token', (req) => console.log(req));
+  router.get('/:token', onRoute);
 });
 
 WebApp.connectHandlers.use(middleware);
