@@ -18,6 +18,7 @@ function onRoute(req, res, next) {
   // if we find a link, redirect user
   // otherwise, send user to homepage
   if (link) {
+    Links.update({token: req.params.token}, {$inc: {clicks: 1}});
     res.writeHead(307, { 'Location': link.url });
     res.end();
   } else {
